@@ -1,41 +1,24 @@
 import express from 'express'
-import productManager from './ProductManager.js'
+import productRoutes from './routes/product.routes.js'
+import cartRoutes from './routes/cart.routes.js'
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 8080
 const app = express()
 
-app.use(express.urlencoded({extended: true}))
 
-app.get('/', (req, res) => {
-})
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
-app.get('/products', (req, res) => {
-    const { limit } = req.query
-    let products = productManager.getProducts()
-    if (!isNaN(limit)) { products.length = limit}
-    res.json(products)
-})
+app.use('/api/carts', cartRoutes)
+app.use('/api/products', productRoutes)
 
-app.get('/products/:pid', (req, res) => {
-    const productID = parseInt(req.params.pid)
 
-    try {
-        const product = productManager.getProductById(productID)
-        res.json(product)
-    } catch (ex) {
-        res.json({
-            status: "error",
-            message: "Not found"
-        })
-    }
-    
-})
-
-app.get('*', (req, res) => {
-    res.send('Error, ruta no encontrada')
-})
 
 app.listen(port, () => console.log(`Listening on port ${port}`))
+
+app.get('*', function(req, res){
+    res.send({error: "not_implemented", description: `Route ${req.url} method ${req.method} not implemented yet`});
+})
 
 
 
