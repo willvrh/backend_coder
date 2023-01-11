@@ -100,7 +100,12 @@ class ProductManager {
 
     getAll = async () => {
         this.loadFromFile();
-        return this.data.length>0 ? {status: "success", payload: this.data} : {status: "failed", error: 'product not found'}
+        try {
+            return {status: "success", payload: this.data}
+        } catch (ex) {
+            return {status: "success", payload: []}
+        }
+        
     }
 
     deleteById = async (id) => {
